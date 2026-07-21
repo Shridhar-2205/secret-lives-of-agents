@@ -1,0 +1,36 @@
+name: Publish to Hashnode
+
+# NOTE: Hashnode retired free GraphQL API access in 2026 (Pro plan required). This workflow
+# is kept for maintainers on Pro and is manual-only (workflow_dispatch). Primary automation
+# is dev.to (see publish-to-devto.yml).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hashnode-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Publish posts
+        env:
+          HASHNODE_PAT: ${{ secrets.HASHNODE_PAT }}
+          HASHNODE_HOST: ${{ secrets.HASHNODE_HOST }}
+        run: python scripts/publish_to_hashnode.py

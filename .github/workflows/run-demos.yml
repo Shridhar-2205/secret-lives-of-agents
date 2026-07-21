@@ -1,0 +1,50 @@
+name: Run demos
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**/*.py"
+      - "**/requirements.txt"
+      - ".github/workflows/run-demos.yml"
+  pull_request:
+    paths:
+      - "**/*.py"
+      - "**/requirements.txt"
+      - ".github/workflows/run-demos.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  demos:
+    name: ${{ matrix.dir }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dir: 01-invented-language
+            cmd: python demo.py
+          - dir: 02-emergent-culture
+            cmd: python demo.py
+          - dir: 03-dreamed-world
+            cmd: python demo.py
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies (if any)
+        working-directory: ${{ matrix.dir }}
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run demo
+        working-directory: ${{ matrix.dir }}
+        run: ${{ matrix.cmd }}

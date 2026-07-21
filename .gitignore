@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Scratch / local notes
+*.tmp
+
+# Local-only reference (distribution + release playbooks) — not for the public repo
+POST.md
+RELEASE.md
+
+# OS
+.DS_Store
